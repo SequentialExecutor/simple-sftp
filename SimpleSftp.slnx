@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/SimpleSftp.Core/SimpleSftp.Core.csproj" />
+    <Project Path="src/SimpleSftp.Desktop/SimpleSftp.Desktop.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/SimpleSftp.Checks/SimpleSftp.Checks.csproj" />
+  </Folder>
+  <Folder Name="/vendor/">
+    <Project Path="vendor/FxSsh/FxSsh.csproj" />
+  </Folder>
+</Solution>

@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework><ImplicitUsings>disable</ImplicitUsings><Nullable>disable</Nullable><Version>1.4.0</Version></PropertyGroup>
+  <ItemGroup><Compile Remove="Algorithms/X25519Kex.cs;Algorithms/MlkemX25519Kex.cs" /></ItemGroup>
+</Project>

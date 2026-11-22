@@ -1,0 +1,180 @@
+<Window x:Class="SimpleSftp.Desktop.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource {x:Type Window}}" Title="Simple SFTP" Width="1180" Height="800" MinWidth="920" MinHeight="640" WindowStartupLocation="CenterScreen" Closing="Window_Closing">
+ <Grid Background="{StaticResource Canvas}">
+  <Grid.ColumnDefinitions><ColumnDefinition Width="204"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+  <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="36"/></Grid.RowDefinitions>
+  <Border Grid.RowSpan="2" Background="#F0F2F6" BorderBrush="{StaticResource Line}" BorderThickness="0,0,1,0">
+   <Grid Margin="12,24,12,16">
+    <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+    <StackPanel Orientation="Horizontal" Margin="8,0,0,32">
+     <Image x:Name="BrandLogo" Source="pack://application:,,,/SimpleSftp.Desktop;component/Assets/SimpleSftp.png" Width="38" Height="38" RenderOptions.BitmapScalingMode="HighQuality" AutomationProperties.Name="Simple SFTP logo"/>
+     <StackPanel Margin="10,0,0,0" VerticalAlignment="Center"><TextBlock Text="Simple SFTP" FontSize="17" FontWeight="SemiBold"/><TextBlock Text="File sharing" FontSize="11" Foreground="{StaticResource Muted}" Margin="0,3,0,0"/></StackPanel>
+    </StackPanel>
+    <ListBox x:Name="Navigation" Grid.Row="1" Style="{StaticResource Navigation}" SelectedIndex="{Binding SelectedIndex, ElementName=MainTabs, Mode=TwoWay}" VerticalAlignment="Top" AutomationProperties.Name="Main navigation">
+     <ListBoxItem AutomationProperties.Name="Users"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE716;" Style="{StaticResource Symbol}"/><TextBlock Text="Users" Margin="12,0,0,0"/></StackPanel></ListBoxItem>
+     <ListBoxItem AutomationProperties.Name="Sessions"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE968;" Style="{StaticResource Symbol}"/><TextBlock Text="Sessions" Margin="12,0,0,0"/></StackPanel></ListBoxItem>
+     <ListBoxItem AutomationProperties.Name="Connection"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE839;" Style="{StaticResource Symbol}"/><TextBlock Text="Connection" Margin="12,0,0,0"/></StackPanel></ListBoxItem>
+     <ListBoxItem AutomationProperties.Name="Settings"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE713;" Style="{StaticResource Symbol}"/><TextBlock Text="Settings" Margin="12,0,0,0"/></StackPanel></ListBoxItem>
+     <ListBoxItem AutomationProperties.Name="Activity"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE9D9;" Style="{StaticResource Symbol}"/><TextBlock Text="Activity" Margin="12,0,0,0"/></StackPanel></ListBoxItem>
+     <ListBoxItem AutomationProperties.Name="Quick start"><StackPanel Orientation="Horizontal"><TextBlock Text="&#xE897;" Style="{StaticResource Symbol}"/><TextBlock Text="Quick start" Margin="12,0,0,0"/></StackPanel></ListBoxItem>
+    </ListBox>
+    <Border Grid.Row="2" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="8,18,0,0"><StackPanel>
+     <StackPanel Orientation="Horizontal"><TextBlock Text="&#xE72E;" Style="{StaticResource Symbol}" FontSize="13" Foreground="{StaticResource Muted}"/><TextBlock Text="SFTP over SSH" FontSize="12" Margin="8,0,0,0"/></StackPanel>
+     <TextBlock Text="Password and public keys" FontSize="11" Foreground="{StaticResource Muted}" Margin="0,7,0,0"/>
+    </StackPanel></Border>
+   </Grid>
+  </Border>
+  <Grid Grid.Column="1" Margin="28,26,28,0">
+   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+   <Grid Margin="0,0,0,24">
+    <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+    <StackPanel Margin="0,0,16,0"><TextBlock x:Name="HeroTitle" Text="Ready to share" FontSize="28" FontWeight="SemiBold"/><TextBlock x:Name="HeroDescription" Text="Add a user, choose their folder, and start your server." Style="{StaticResource Secondary}" Margin="0,8,0,0"/></StackPanel>
+    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Top" Margin="0,3,0,0">
+     <Border x:Name="StatusContainer" Background="#E9ECF1" CornerRadius="12" Padding="11,5" VerticalAlignment="Center" Margin="0,0,12,0"><TextBlock x:Name="StatusBadge" Text="&#x25CF;  Stopped" FontSize="12" FontWeight="SemiBold"/></Border>
+     <Button x:Name="StartButton" Content="Start server" Style="{StaticResource Primary}" Click="ToggleServer_Click" MinWidth="116" AutomationProperties.Name="Start or stop the server"/>
+    </StackPanel>
+   </Grid>
+   <UniformGrid Grid.Row="1" Columns="3" Margin="0,0,0,24">
+    <Border Style="{StaticResource Card}" Padding="18,16" Margin="0,0,12,0"><StackPanel><TextBlock Text="Listening address" Style="{StaticResource Secondary}" FontSize="12"/><TextBlock x:Name="EndpointText" Text="127.0.0.1 : 2222" FontFamily="Cascadia Mono, Consolas" FontSize="18" FontWeight="SemiBold" Margin="0,10,0,0" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel></Border>
+    <Border Style="{StaticResource Card}" Padding="18,16" Margin="0,0,12,0"><StackPanel><TextBlock Text="User accounts" Style="{StaticResource Secondary}" FontSize="12"/><TextBlock x:Name="UserCountText" Text="0 enabled" FontSize="22" FontWeight="SemiBold" Margin="0,7,0,0"/></StackPanel></Border>
+    <Border Style="{StaticResource Card}" Padding="18,16"><StackPanel><TextBlock Text="Connected clients" Style="{StaticResource Secondary}" FontSize="12"/><TextBlock x:Name="ConnectionsText" Text="0" FontSize="22" FontWeight="SemiBold" Margin="0,7,0,0"/></StackPanel></Border>
+   </UniformGrid>
+   <TabControl x:Name="MainTabs" Grid.Row="2" Style="{StaticResource PageHost}" SelectedIndex="0" Margin="0,0,0,16">
+    <TabItem Header="Users">
+     <Border Style="{StaticResource Card}"><Grid>
+      <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+      <Grid Margin="22,20"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+       <StackPanel Margin="0,0,12,0"><TextBlock Text="Users" Style="{StaticResource SectionTitle}"/><TextBlock x:Name="UsersDescription" Text="Manage who can connect and what they can access." Style="{StaticResource Secondary}" Margin="0,5,0,0"/>
+        <Border x:Name="FolderProblemBanner" Visibility="Collapsed" Background="#FFF0F2" CornerRadius="4" Padding="8,6" Margin="0,6,0,0"><TextBlock x:Name="FolderErrorText" Foreground="#A52B38" FontSize="12" MaxHeight="54" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" AutomationProperties.LiveSetting="Assertive"/></Border>
+       </StackPanel>
+       <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"><Button x:Name="RecheckFoldersButton" Content="Recheck folders" Click="RecheckFolders_Click" Margin="0,0,8,0"/><Button x:Name="AddButton" Content="+  Add user" Style="{StaticResource Primary}" Click="AddUser_Click"/></StackPanel>
+      </Grid>
+      <Grid Grid.Row="1">
+       <DataGrid x:Name="UsersGrid" SelectionChanged="UsersGrid_SelectionChanged" MouseDoubleClick="UsersGrid_MouseDoubleClick" AutomationProperties.Name="SFTP users">
+        <DataGrid.Columns>
+         <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="135" ElementStyle="{StaticResource GridText}"/>
+         <DataGridTextColumn Header="Sign-in" Binding="{Binding AuthenticationLabel}" Width="122" ElementStyle="{StaticResource GridText}"/>
+         <DataGridTemplateColumn Header="Home folder" Width="*" MinWidth="100"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock x:Name="HomeFolderPath" Text="{Binding HomeDirectory}" ToolTip="{Binding HomeDirectoryHint}"><TextBlock.Style><Style TargetType="TextBlock" BasedOn="{StaticResource GridText}"><Setter Property="Foreground" Value="{StaticResource Muted}"/><Style.Triggers><DataTrigger Binding="{Binding IsHomeDirectoryMissing}" Value="True"><Setter Property="Foreground" Value="#A52B38"/><Setter Property="TextDecorations" Value="Strikethrough"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+         <DataGridTextColumn Header="Access" Binding="{Binding AccessLabel}" Width="122" ElementStyle="{StaticResource GridText}"/>
+         <DataGridTemplateColumn Header="Status" Width="106"><DataGridTemplateColumn.CellTemplate><DataTemplate>
+          <Border CornerRadius="4" Padding="8,4" HorizontalAlignment="Left"><TextBlock Text="{Binding StatusLabel}" FontSize="11"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Foreground" Value="#246344"/><Style.Triggers><DataTrigger Binding="{Binding Enabled}" Value="False"><Setter Property="Foreground" Value="{StaticResource Muted}"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+           <Border.Style><Style TargetType="Border"><Setter Property="Background" Value="#E9F4EE"/><Style.Triggers><DataTrigger Binding="{Binding Enabled}" Value="False"><Setter Property="Background" Value="#EFF1F4"/></DataTrigger></Style.Triggers></Style></Border.Style>
+          </Border>
+         </DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+        </DataGrid.Columns>
+       </DataGrid>
+       <StackPanel x:Name="EmptyUsers" VerticalAlignment="Center" HorizontalAlignment="Center" IsHitTestVisible="False" Margin="20,48,20,20">
+        <Border Background="{StaticResource AccentSoft}" CornerRadius="16" Width="56" Height="56" HorizontalAlignment="Center" Margin="0,0,0,18"><TextBlock Text="&#xE716;" Style="{StaticResource Symbol}" FontSize="24" Foreground="{StaticResource Accent}" HorizontalAlignment="Center"/></Border>
+        <TextBlock Text="No users yet" FontSize="19" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+        <TextBlock Text="Add a user and choose a folder to start sharing." Style="{StaticResource Secondary}" Margin="0,8,0,0" TextAlignment="Center"/>
+       </StackPanel>
+      </Grid>
+      <Border Grid.Row="2" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="22,16"><DockPanel>
+       <StackPanel DockPanel.Dock="Left" Orientation="Horizontal"><Button x:Name="EditButton" Content="Edit user" Click="EditUser_Click" IsEnabled="False" Margin="0,0,8,0"/><Button x:Name="RemoveButton" Content="Remove" Style="{StaticResource Danger}" Click="RemoveUser_Click" IsEnabled="False"/></StackPanel>
+       <TextBlock x:Name="EditHint" Text="Changes save automatically." Style="{StaticResource Secondary}" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="12,0,0,0"/>
+      </DockPanel></Border>
+     </Grid></Border>
+    </TabItem>
+    <TabItem Header="Sessions" x:Name="SessionsTab">
+     <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="140"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+      <Grid Margin="0,0,0,14"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="Live sessions" Style="{StaticResource SectionTitle}"/><TextBlock Text="Connected users and file activity. Updates every half second." Style="{StaticResource Secondary}" Margin="0,5,0,0"/></StackPanel><Button x:Name="DisconnectButton" Grid.Column="1" Content="Disconnect session" Style="{StaticResource Danger}" Click="DisconnectSession_Click" IsEnabled="False"/></Grid>
+      <Border Grid.Row="1" Style="{StaticResource Card}"><DataGrid x:Name="SessionsGrid" SelectionChanged="SessionsGrid_SelectionChanged" AutomationProperties.Name="Connected sessions"><DataGrid.Columns>
+       <DataGridTextColumn Header="User" Binding="{Binding Username}" Width="*" ElementStyle="{StaticResource GridText}"/>
+       <DataGridTextColumn Header="Remote address" Binding="{Binding RemoteAddress}" Width="*" ElementStyle="{StaticResource GridText}"/>
+       <DataGridTextColumn Header="Authentication" Binding="{Binding Authentication}" Width="120" ElementStyle="{StaticResource GridText}"/>
+       <DataGridTextColumn Header="Connected" Binding="{Binding ConnectedTime}" Width="100" ElementStyle="{StaticResource GridText}"/>
+      </DataGrid.Columns></DataGrid></Border>
+      <DockPanel Grid.Row="2" Margin="0,18,0,12"><TextBlock Text="Transfers" FontSize="17" FontWeight="SemiBold"/><TextBlock Text="Active and the latest 200 finished transfers" Style="{StaticResource Secondary}" HorizontalAlignment="Right"/></DockPanel>
+      <Border Grid.Row="3" Style="{StaticResource Card}"><DataGrid x:Name="TransfersGrid" RowHeight="60" AutomationProperties.Name="File transfers"><DataGrid.Columns>
+       <DataGridTextColumn Header="User" Binding="{Binding Username}" Width="95" ElementStyle="{StaticResource GridText}"/>
+       <DataGridTemplateColumn Header="File" Width="*" MinWidth="90"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock Text="{Binding Path}" ToolTip="{Binding Path}" Style="{StaticResource GridText}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+       <DataGridTextColumn Header="Direction" Binding="{Binding Direction}" Width="86" ElementStyle="{StaticResource GridText}"/>
+       <DataGridTemplateColumn Header="Progress" Width="150"><DataGridTemplateColumn.CellTemplate><DataTemplate><StackPanel><ProgressBar Value="{Binding Percent}" Maximum="100" IsIndeterminate="{Binding IsIndeterminate}" Height="4" Foreground="{StaticResource Accent}" Background="{StaticResource AccentSoft}"/><TextBlock Text="{Binding ProgressLabel}" FontSize="11" Margin="0,6,0,0" Foreground="{StaticResource Muted}"/></StackPanel></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+       <DataGridTextColumn Header="Transferred" Binding="{Binding Transferred}" Width="95" ElementStyle="{StaticResource GridText}"/>
+       <DataGridTextColumn Header="Speed" Binding="{Binding Speed}" Width="95" ElementStyle="{StaticResource GridText}"/>
+       <DataGridTextColumn Header="State" Binding="{Binding Status}" Width="100" ElementStyle="{StaticResource GridText}"/>
+      </DataGrid.Columns></DataGrid></Border>
+     </Grid>
+    </TabItem>
+    <TabItem Header="Connection">
+     <ScrollViewer VerticalScrollBarVisibility="Auto"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="16"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+      <Border Style="{StaticResource Card}" Padding="22" VerticalAlignment="Top"><StackPanel x:Name="ConnectionForm">
+       <TextBlock Text="Connection" Style="{StaticResource SectionTitle}"/><TextBlock Text="Stop the server to edit connection settings." Style="{StaticResource Secondary}" Margin="0,6,0,0"/>
+       <TextBlock Text="Listen IP address" Style="{StaticResource Label}"/><TextBox x:Name="AddressInput" AutomationProperties.Name="Listen IP address"/>
+       <CheckBox x:Name="UseCurrentAddressInput" Content="Use this computer's network IP automatically" Checked="UseCurrentAddress_Changed" Unchecked="UseCurrentAddress_Changed" Margin="0,10,0,6"/>
+       <TextBlock Text="Detected from active Ethernet or Wi-Fi. Turn off automatic detection to enter another address, such as 127.0.0.1 or 0.0.0.0." Style="{StaticResource Secondary}" Margin="0,2,0,0"/>
+       <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="12"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <StackPanel><TextBlock Text="SFTP port" Style="{StaticResource Label}"/><TextBox x:Name="PortInput" AutomationProperties.Name="SFTP port"/></StackPanel>
+        <StackPanel Grid.Column="2"><TextBlock Text="Connection limit" Style="{StaticResource Label}"/><TextBox x:Name="LimitInput" AutomationProperties.Name="Connection limit"/></StackPanel>
+       </Grid>
+       <Button Content="Save settings" Style="{StaticResource Primary}" Click="SaveSettings_Click" HorizontalAlignment="Left" Margin="0,24,0,0"/>
+      </StackPanel></Border>
+      <StackPanel Grid.Column="2">
+       <Border Style="{StaticResource Card}" Padding="22"><StackPanel><TextBlock Text="Server identity" Style="{StaticResource SectionTitle}"/>
+        <TextBlock Text="Compare this fingerprint with your client's first connection prompt." Style="{StaticResource Secondary}" Margin="0,8,0,18"/>
+        <TextBox x:Name="FingerprintText" IsReadOnly="True" TextWrapping="Wrap" FontFamily="Cascadia Mono, Consolas" FontSize="12" Background="#F8F9FB" AutomationProperties.Name="Server fingerprint"/>
+        <TextBlock Text="Your server identity is preserved between restarts." Style="{StaticResource Secondary}" Margin="0,12,0,0"/>
+       </StackPanel></Border>
+       <Border Background="{StaticResource AccentSoft}" CornerRadius="10" Padding="22" Margin="0,16,0,0"><StackPanel><TextBlock Text="Sharing on your network" FontWeight="SemiBold"/>
+        <TextBlock Text="Listen on 0.0.0.0, allow the SFTP port in Windows Firewall, and connect using this device's LAN IP address." Style="{StaticResource Secondary}" Margin="0,8,0,0"/>
+       </StackPanel></Border>
+      </StackPanel>
+     </Grid></ScrollViewer>
+    </TabItem>
+    <TabItem Header="Settings" x:Name="SettingsTab">
+     <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+      <TextBlock Text="Application settings" Style="{StaticResource SectionTitle}"/><TextBlock Text="Make Simple SFTP work the way you do." Style="{StaticResource Secondary}" Margin="0,6,0,20"/>
+      <Border Style="{StaticResource Card}" Padding="24"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="40"/><ColumnDefinition Width="*"/><ColumnDefinition Width="84"/></Grid.ColumnDefinitions>
+       <TextBlock Text="&#xE921;" Style="{StaticResource Symbol}" Foreground="{StaticResource Muted}" VerticalAlignment="Top" Margin="0,4,0,0"/>
+       <StackPanel Grid.Column="1" Margin="0,0,24,0"><TextBlock Text="Minimize to the system tray" FontWeight="SemiBold"/>
+        <TextBlock Text="Keep the app near the clock when minimized. Turn this off to use the taskbar instead. Your server keeps running either way." Style="{StaticResource Secondary}" Margin="0,8,0,0"/>
+       </StackPanel>
+       <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
+        <TextBlock Margin="0,2,10,0" FontSize="12" Foreground="{StaticResource Muted}"><TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Text" Value="Off"/><Style.Triggers><DataTrigger Binding="{Binding IsChecked, ElementName=MinimizeToTrayInput}" Value="True"><Setter Property="Text" Value="On"/></DataTrigger></Style.Triggers></Style></TextBlock.Style></TextBlock>
+        <CheckBox x:Name="MinimizeToTrayInput" Style="{StaticResource Toggle}" Checked="Preference_Changed" Unchecked="Preference_Changed" AutomationProperties.Name="Minimize to the system tray" ToolTip="Minimize to the system tray"/>
+       </StackPanel>
+      </Grid></Border>
+      <Border Style="{StaticResource Card}" Padding="24" Margin="0,16,0,0"><StackPanel><TextBlock Text="Startup" FontSize="17" FontWeight="SemiBold"/>
+       <CheckBox x:Name="StartWithWindowsInput" Content="Start Simple SFTP when I sign in to Windows" Checked="Preference_Changed" Unchecked="Preference_Changed"/>
+       <CheckBox x:Name="StartMinimizedInput" Content="Launch minimized when starting with Windows" Checked="Preference_Changed" Unchecked="Preference_Changed"/>
+       <CheckBox x:Name="AutoStartServerInput" Content="Start the server automatically when the app opens" Checked="Preference_Changed" Unchecked="Preference_Changed"/>
+       <TextBlock Text="Startup applies to your Windows account. Keep the app in its current folder after enabling it." Style="{StaticResource Secondary}" Margin="0,8,0,0"/>
+      </StackPanel></Border>
+      <Border Style="{StaticResource Card}" Padding="24" Margin="0,16,0,0"><StackPanel><TextBlock Text="Backup and restore" FontSize="17" FontWeight="SemiBold"/>
+       <TextBlock Text="Save users, preferences, and the private host key in a password-encrypted backup. Shared files are not included." Style="{StaticResource Secondary}" Margin="0,8,0,16"/>
+       <StackPanel Orientation="Horizontal"><Button x:Name="ExportBackupButton" Content="Create backup" Click="ExportBackup_Click" Margin="0,0,10,0"/><Button x:Name="RestoreBackupButton" Content="Restore backup" Click="RestoreBackup_Click"/></StackPanel>
+       <TextBlock Text="Stop the server before restoring. Startup is disabled after restore so you can review account folders first." Style="{StaticResource Secondary}" Margin="0,12,0,0"/>
+      </StackPanel></Border>
+      <TextBlock Text="Preferences save automatically and apply while the server is running." Style="{StaticResource Secondary}" Margin="2,16,0,0"/>
+     </StackPanel></ScrollViewer>
+    </TabItem>
+    <TabItem Header="Activity">
+     <Border Style="{StaticResource Card}"><Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+      <Grid Margin="22,20"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+       <StackPanel Margin="0,0,12,0"><TextBlock Text="Activity" Style="{StaticResource SectionTitle}"/><TextBlock Text="Connections, sign-ins, and file operations. Newest first." Style="{StaticResource Secondary}" Margin="0,5,0,0"/></StackPanel>
+       <Button Content="Open log folder" Click="OpenLogs_Click" Grid.Column="1" VerticalAlignment="Center"/>
+      </Grid>
+      <DataGrid Grid.Row="1" x:Name="ActivityGrid" AutomationProperties.Name="Server activity"><DataGrid.Columns>
+       <DataGridTextColumn Header="Time" Binding="{Binding DisplayTime}" Width="90" ElementStyle="{StaticResource GridText}"/>
+       <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="90" ElementStyle="{StaticResource GridText}"/>
+       <DataGridTemplateColumn Header="Event" Width="*"><DataGridTemplateColumn.CellTemplate><DataTemplate><TextBlock Text="{Binding Message}" ToolTip="{Binding Message}" Style="{StaticResource GridText}"/></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
+      </DataGrid.Columns></DataGrid>
+      <Border Grid.Row="2" Padding="22,14" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0"><TextBlock Text="Latest 500 events from this session. Logs rotate at 5 MB." Style="{StaticResource Secondary}" FontSize="12"/></Border>
+     </Grid></Border>
+    </TabItem>
+    <TabItem Header="Quick start">
+     <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
+      <TextBlock Text="Start sharing in minutes" Style="{StaticResource SectionTitle}"/><TextBlock Text="A folder, a login, and your favorite SFTP client." Style="{StaticResource Secondary}" Margin="0,6,0,20"/>
+      <Border Style="{StaticResource Card}" Padding="24"><StackPanel>
+       <TextBlock Text="1. Add a user" FontSize="16" FontWeight="SemiBold"/><TextBlock Text="Choose a username, a password or public key, and an existing folder. Select read-only access for downloads only." Style="{StaticResource Secondary}" Margin="0,8,0,24"/>
+       <TextBlock Text="2. Start your server" FontSize="16" FontWeight="SemiBold"/><TextBlock Text="Your network IP is filled in automatically. Review it in Connection, allow the port in Windows Firewall for other devices, then select Start server." Style="{StaticResource Secondary}" Margin="0,8,0,24"/>
+       <TextBlock Text="3. Connect with your client" FontSize="16" FontWeight="SemiBold"/><TextBlock Text="In WinSCP or FileZilla, choose SFTP and enter the host, port, and user credentials. Or use OpenSSH:" Style="{StaticResource Secondary}" Margin="0,8,0,12"/>
+       <TextBox x:Name="CommandText" IsReadOnly="True" FontFamily="Cascadia Mono, Consolas" Background="#F8F9FB" AutomationProperties.Name="OpenSSH connection command"/>
+      </StackPanel></Border>
+      <TextBlock Text="Minimize to keep sharing. Use the tray menu to start or stop the server. Closing the app disconnects all clients." Style="{StaticResource Secondary}" Margin="2,16,0,12"/>
+     </StackPanel></ScrollViewer>
+    </TabItem>
+   </TabControl>
+  </Grid>
+  <Border Grid.Column="1" Grid.Row="1" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="28,10"><TextBlock x:Name="FooterText" Text="Ready when you are" FontSize="11" Foreground="{StaticResource Muted}"/></Border>
+ </Grid>
+</Window>
