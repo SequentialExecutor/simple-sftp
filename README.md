@@ -4,6 +4,28 @@ A small Windows desktop SFTP server written in C# and WPF on .NET 10. Create a l
 
 ![Simple SFTP](assets/preview.png)
 
+## Screenshots
+
+### Running server and user accounts
+
+![Running server and user accounts](assets/screenshots/users.png)
+
+### Live sessions and transfers
+
+![Live sessions and transfers](assets/screenshots/sessions.png)
+
+### Connection settings
+
+![Connection settings](assets/screenshots/connection.png)
+
+### App settings, startup, and backups
+
+![App settings, startup, and backups](assets/screenshots/settings.png)
+
+### Public-key account setup
+
+![Public-key account setup](assets/screenshots/add-user.png)
+
 ## Run
 
 Open `artifacts/SimpleSftp/SimpleSftp.Desktop.exe` after building, or double-click `run.cmd` to run from source. The application requires the **.NET 10 Desktop Runtime**; building requires the **.NET 10 SDK** on Windows.
